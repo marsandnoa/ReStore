@@ -1,4 +1,4 @@
-import { List, ListItemButton, ListItemAvatar, ListItemText, Avatar, Button, Card, CardActions, CardContent, CardMedia, Typography, CardHeader } from "@mui/material";
+import { Avatar, Button, Card, CardActions, CardContent, CardMedia, Typography, CardHeader } from "@mui/material";
 import { Product } from "../../app/models/product";
 
 interface Props {

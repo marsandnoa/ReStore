@@ -1,5 +1,5 @@
 import React from "react";
-import { List, ListItemButton, ListItemAvatar, ListItemText, Avatar, Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Product } from "../../app/models/product";
 import ProductCard from "./ProductCard";
 

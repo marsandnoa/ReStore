@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {Button } from "@mui/material";
 import { Product } from "../../app/models/product";
 import ProductList from "./ProductList";
 
@@ -14,7 +13,7 @@ export default function Catalog() {
     }
     ,[]
     )
-    
+
   return (
     <>
     <ProductList products={products}/>
