@@ -13,6 +13,8 @@ builder.Services.AddDbContext<StoreContext>(opt=>
 });
 builder.Services.AddControllers();
 
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -21,6 +23,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(opt=>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+});
 
 var scope= app.Services.CreateScope();
 var context=scope.ServiceProvider.GetRequiredService<StoreContext>();
@@ -35,6 +42,10 @@ catch(Exception ex)
     logger.LogError(ex, "A problem occured during migration");
     throw;
 }
+
+app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
 
