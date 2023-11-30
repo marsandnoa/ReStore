@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import {useState } from 'react'
 import Catalog from '../../features/catalog/Catalog'
-import { Container, CssBaseline, ThemeProvider, Typography, createTheme } from '@mui/material'
+import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 import Header from './Header'
 import HomePage from '../../features/home/HomePage';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes} from 'react-router-dom';
 import ProductDetails from '../../features/catalog/ProductDetails';
 import AboutPage from '../../features/about/AboutPage';
 import ContactPage from '../../features/contact/ContactPage';
@@ -28,8 +28,6 @@ function App() {
   function handleThemeChange() {
     setDarkMode(!darkMode);
   }
-
-  const location = useLocation();
 
   return (
     <>

@@ -3,7 +3,7 @@ import agent from "../../app/api/agent";
 import { useState } from "react";
 
 export default function AboutPage(){
-    const [validationErrors,setValidationErrors] = useState<String[]>([])
+    const [validationErrors,setValidationErrors] = useState<string[]>([])
 
     function getValidationError(){
         agent.TestErrors.getValidationError()
