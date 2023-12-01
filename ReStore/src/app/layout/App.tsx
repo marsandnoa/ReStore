@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Catalog from '../../features/catalog/Catalog'
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 import Header from './Header'
@@ -13,13 +13,14 @@ import ServerError from '../errors/ServerError';
 import NotFound from '../errors/NotFound';
 import BasketPage from '../../features/basket/BasketPage';
 import agent from '../api/agent';
-import { StoreContext, useStoreContext } from '../context/StoreContext';
 import { getCookie } from '../util/util';
 import LoadingComponent from './LoadingComponent';
 import CheckoutPage from '../../features/checkout/CheckoutPage';
+import { useAppDispatch } from '../store/configureStore';
+import { setBasket } from '../../features/basket/basketSlice';
 
 function App() {
-  const {setBasket} = useStoreContext();
+  const dispatch=useAppDispatch();
   const [loading,setLoading]=useState(true);
 
 
@@ -27,16 +28,16 @@ function App() {
     const buyerId=getCookie('buyerId');
     if(buyerId){
       agent.Basket.get()
-      .then(response=>setBasket(response))
+      .then(response=>dispatch(setBasket(response)))
       .catch(error=>console.log(error))
       .finally(()=>setLoading(false));
     }
     else{
       setLoading(false);
     }
-  },[setBasket])
+  },[dispatch])
 
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const paletteType = darkMode ? "dark" : "light";
 
   const theme=createTheme({
