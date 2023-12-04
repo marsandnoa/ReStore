@@ -1,14 +1,28 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
+import { PaginatedResponse } from '../models/pagination';
+import { store } from '../store/configureStore';
 
 axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.withCredentials = true;
 const responseBody = (response: AxiosResponse) => response.data;
 
+axios.interceptors.request.use((config) => {
+    const token=store.getState().account.user?.token;
+    if(token) config.headers.Authorization=`Bearer ${token}`;
+    return config;
+});
+
+
 const sleep=() => new Promise(resolve=>setTimeout(resolve,1000));
 
 axios.interceptors.response.use(async response => {
     await sleep();
+    const pagination=response.headers['pagination'];
+    if (pagination){
+        response.data=new PaginatedResponse(response.data,JSON.parse(pagination));
+        return response;
+    }
     return response;
 }, (error: AxiosError) => 
 {
@@ -29,7 +43,7 @@ axios.interceptors.response.use(async response => {
             toast.error(data.title);
             break;
         case 401:
-            toast.error(data.title);
+            toast.error(data.title||'unauthorized');
             break;
         case 404:
             toast.error(data.title);
@@ -46,15 +60,16 @@ axios.interceptors.response.use(async response => {
 });
 
 const requests = {
-    get: (url: string) => axios.get(url).then(responseBody),
+    get: (url: string, params?:URLSearchParams) => axios.get(url,{params}).then(responseBody),
     post: (url: string, body: object) => axios.post(url, body).then(responseBody),
     put: (url: string, body: object) => axios.put(url, body).then(responseBody),
     del: (url: string) => axios.delete(url).then(responseBody),
 };
 
 const Catalog = {
-    list: () => requests.get('/Products'),
+    list: (params:URLSearchParams) => requests.get('/Products',params),
     details: (id: number) => requests.get(`/Products/${id}`),
+    fetchFilters: () => requests.get('/Products/filters'),
 };
 
 const TestErrors={
@@ -70,10 +85,17 @@ const Basket={
     addItem: (productId: number,quantity=1)=>requests.post(`/basket?productId=${productId}&quantity=${quantity}`,{}),
     remove: (productId: number,quantity=1)=>requests.del(`/basket?productId=${productId}&quantity=${quantity}`),
 }
+
+const Account={
+    login:(values:any)=>requests.post('/account/login',values),
+    register:(values:any)=>requests.post('/account/register',values),
+    currentUser:()=>requests.get('/account/CurrentUser'),
+}
 const agent={
     Catalog,
     TestErrors,
-    Basket
+    Basket,
+    Account
 }
 
 export default agent;

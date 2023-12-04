@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Catalog from '../../features/catalog/Catalog'
 import { Container, CssBaseline, ThemeProvider, createTheme } from '@mui/material'
 import Header from './Header'
@@ -17,25 +17,30 @@ import { getCookie } from '../util/util';
 import LoadingComponent from './LoadingComponent';
 import CheckoutPage from '../../features/checkout/CheckoutPage';
 import { useAppDispatch } from '../store/configureStore';
-import { setBasket } from '../../features/basket/basketSlice';
+import { fetchBasketAsync, setBasket } from '../../features/basket/basketSlice';
+import Login from '../../features/account/Login';
+import Register from '../../features/account/Register';
+import { fetchCurrentUser } from '../../features/account/accountSlice';
 
 function App() {
   const dispatch=useAppDispatch();
   const [loading,setLoading]=useState(true);
 
 
+  const initApp=useCallback(async()=>{
+    try{
+      await dispatch(fetchCurrentUser());
+      await dispatch(fetchBasketAsync());
+
+    }catch(error:any){
+      console.log(error);
+    }
+
+  },[dispatch]);
+  
   useEffect(()=>{
-    const buyerId=getCookie('buyerId');
-    if(buyerId){
-      agent.Basket.get()
-      .then(response=>dispatch(setBasket(response)))
-      .catch(error=>console.log(error))
-      .finally(()=>setLoading(false));
-    }
-    else{
-      setLoading(false);
-    }
-  },[dispatch])
+    initApp().then(()=>setLoading(false));
+  },[initApp])
 
   const [darkMode, setDarkMode] = useState(true);
   const paletteType = darkMode ? "dark" : "light";
@@ -71,6 +76,8 @@ function App() {
           <Route path='/contact' element={<ContactPage />} />
           <Route path='/basket' element={<BasketPage/>} />
           <Route path='/checkout' element={<CheckoutPage/>} />
+          <Route path='/login' element={<Login/>} />
+          <Route path='/register' element={<Register/>} />
           <Route path='/server-error' element={<ServerError />} />
           <Route path='/not-found' element={<NotFound />} />
           <Route path='*' element={<Navigate replace to='/not-found'/>} />
