@@ -23,6 +23,7 @@ namespace API.Controllers
         {
             this.userManager = userManager;
             this.tokenservice = tokenservice;
+            this.context = context;
         }
 
         [HttpPost("login")]
