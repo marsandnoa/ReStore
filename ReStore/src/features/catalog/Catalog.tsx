@@ -8,6 +8,7 @@ import ProductSearch from "./ProductSearch";
 import RadioButtonGroup from "../../app/components/RadioButtonGroup";
 import CheckboxButtons from "../../app/components/CheckBoxButtons";
 import AppPagination from "../../app/components/AppPagination";
+import useProducts from "../../app/hooks/useProducts";
 
 const sortOptions=[
   {value:'name',label:'Name: A-Z'},
@@ -16,21 +17,9 @@ const sortOptions=[
 ]
 
 export default function Catalog() {
-    const products=useAppSelector(productSelectors.selectAll);
-    const {productsLoaded,status,filtersLoaded,brands,types,productParams,metaData}=useAppSelector(state=>state.catalog);
+    const{products,brands,types,filtersLoaded,ProductsLoaded,metaData}=useProducts();
+    const {productParams}=useAppSelector(state=>state.catalog);
     const dispatch=useAppDispatch();
-
-    useEffect(()=>{
-      if(!productsLoaded){
-        dispatch(fetchProductsAsync());
-      }
-    },[dispatch,productsLoaded])
-
-    useEffect(()=>{
-        if(!filtersLoaded){
-            dispatch(fetchFilters());
-        }
-    },[dispatch,filtersLoaded,productParams])
 
     if(!filtersLoaded) return <LoadingComponent message='Loading Products'/>
 

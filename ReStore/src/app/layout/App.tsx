@@ -22,6 +22,7 @@ import Login from '../../features/account/Login';
 import Register from '../../features/account/Register';
 import { fetchCurrentUser } from '../../features/account/accountSlice';
 import Orders from '../../features/Orders/Orders';
+import Inventory from '../../features/admin/Inventory';
 
 function App() {
   const dispatch=useAppDispatch();
@@ -71,6 +72,7 @@ function App() {
       <Container>
         <Routes>
         <Route path='/checkout' element={<CheckoutPage/>} />
+        <Route path='/inventory' element={<Inventory/>} />
         <Route path='/orders' element={<Orders/>} />
           <Route path='/' element={<HomePage />} />
           <Route path='/catalog' element={<Catalog />} />

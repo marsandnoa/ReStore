@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { PaginatedResponse } from '../models/pagination';
 import { store } from '../store/configureStore';
+import { create } from '@mui/material/styles/createTransitions';
 
 axios.defaults.baseURL = 'http://localhost:5000/api/';
 axios.defaults.withCredentials = true;
@@ -64,8 +65,25 @@ const requests = {
     post: (url: string, body: object) => axios.post(url, body).then(responseBody),
     put: (url: string, body: object) => axios.put(url, body).then(responseBody),
     del: (url: string) => axios.delete(url).then(responseBody),
+    postForm: (url: string, data:FormData) => axios.post(url,data,
+        {headers:{'Content-type':'multipart/form-data'}}).then(responseBody),
+    putForm: (url: string, data:FormData) => axios.put(url,data,
+        {headers:{'Content-type':'multipart/form-data'}}).then(responseBody),
 };
 
+function createFormData(item:any){
+    const formData= new FormData();
+    for (const key in item){
+        formData.append(key,item[key]);
+    }
+    return formData;
+}
+
+const Admin={
+    createProduct:(product:any)=>requests.postForm('products',createFormData(product)),
+    updateProduct:(product:any)=>requests.putForm('products',createFormData(product)),
+    deleteProduct:(id:number)=>requests.del(`products/${id}`),
+}
 const Catalog = {
     list: (params:URLSearchParams) => requests.get('/Products',params),
     details: (id: number) => requests.get(`/Products/${id}`),
@@ -104,7 +122,8 @@ const agent={
     TestErrors,
     Basket,
     Account,
-    Orders
+    Orders,
+    Admin
 }
 
 export default agent;

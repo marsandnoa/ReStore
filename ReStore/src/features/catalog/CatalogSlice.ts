@@ -3,6 +3,7 @@ import agent from "../../app/api/agent";
 import { RootState } from "../../app/store/configureStore";
 import { Product, ProductParams } from "../../app/models/product";
 import { MetaData } from "../../app/models/pagination";
+import { act } from "react-dom/test-utils";
 
 interface CatalogState {
     productsLoaded: boolean;
@@ -42,7 +43,6 @@ export const fetchProductsAsync = createAsyncThunk<Product[],void,{state:RootSta
         const params=getAxiosParams(thunkAPI.getState().catalog.productParams);
         try {
            const response= await agent.Catalog.list(params);
-           console.log(response);
            thunkAPI.dispatch(setMetaData(response.metaData));
               return response.items;
         } catch (error:any) {
@@ -106,7 +106,12 @@ export const catalogSlice = createSlice({
         resetProductParams: (state) => {
             state.productParams = initParams();
         },
-
+        setProduct:(state,action)=>{
+            productsAdapter.upsertOne(state,action.payload);
+        },
+        removeProduct: (state, action) => {
+            productsAdapter.removeOne(state, action.payload);
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(fetchProductsAsync.pending, (state) => {
@@ -153,4 +158,4 @@ export const catalogSlice = createSlice({
 });
 
 export const productSelectors = productsAdapter.getSelectors((state: RootState) => state.catalog);
-export const { setProductParams, resetProductParams,setMetaData,setPageNumber} = catalogSlice.actions;
+export const { setProductParams, resetProductParams,setMetaData,setPageNumber,setProduct,removeProduct} = catalogSlice.actions;
