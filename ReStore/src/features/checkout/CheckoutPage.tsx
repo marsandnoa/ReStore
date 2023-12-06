@@ -53,7 +53,7 @@ export default function CheckoutPage() {
         if(activeStep===steps.length-1){
             setLoading(true);
             try{
-                const orderNumber=await agent.Orders.create({saveAddress,shippingAddress});
+                const orderNumber=await agent.Orders.create({saveAddress,shippingAddress}).then(response=>response.orderId);
                 setOrderNumber(orderNumber);
                 dispatch(clearBasket());
                 setActiveStep(activeStep + 1);
@@ -94,7 +94,7 @@ export default function CheckoutPage() {
                         <Typography variant="subtitle1">
                             Your order number is #{orderNumber}. We have not emailed your order
                             confirmation, and will not send you an update when your order has
-                            shipped.
+                            shipped. This is not a real website.
                         </Typography>
                     </>
                 ) : (

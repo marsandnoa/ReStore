@@ -42,6 +42,9 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
+          <Typography component="h1" variant="h5">
+            Use "username:admin" and "password:Pa$$w0rd"
+          </Typography>
           <Box component="form" onSubmit={handleSubmit(submitForm)} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"

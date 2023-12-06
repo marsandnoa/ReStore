@@ -74,6 +74,7 @@ namespace API.Controllers
                 ShippingAddress=orderDto.ShippingAddress,
                 Subtotal=subtotal,
                 DeliveryFee=deliveryFee,
+                OrderDate=DateTime.Now,
             };
 
             context.Orders.Add(order);
@@ -101,7 +102,7 @@ namespace API.Controllers
 
             var result=await context.SaveChangesAsync()>0;
 
-            if(result) return CreatedAtRoute("GetOrder",new {id=order.Id},order.Id);
+            if (result) return Ok(new { orderId = order.Id});
 
             return BadRequest(new ProblemDetails{Title="Problem creating order"});
         }    

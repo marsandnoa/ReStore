@@ -12,6 +12,7 @@ import agent from "../../app/api/agent";
 import { useAppDispatch } from "../../app/store/configureStore";
 import { setProduct } from "../catalog/CatalogSlice";
 import { LoadingButton } from "@mui/lab";
+import AppDropzone from "../../app/components/AppDropzone";
 interface Props {
     product?: Product;
     cancelEdit: () => void;
@@ -70,14 +71,14 @@ export default function ProductForm({product,cancelEdit}: Props) {
                     <AppTextInput multiline={true} rows={4} control={control} name='description' label='Description' />
                 </Grid>
                 <Grid item xs={12}>
-                    <AppTextInput control={control} name='pictureUrl' label='Image' />
+                    <AppDropzone control={control} name='file' />
                 </Grid>
             </Grid>
-            </form>
             <Box display='flex' justifyContent='space-between' sx={{mt: 3}}>
                 <Button onClick={cancelEdit} variant='contained' color='inherit'>Cancel</Button>
                 <LoadingButton type='submit' variant='contained' color='success'>Submit</LoadingButton>
             </Box>
+            </form>
         </Box>
     )
 }
