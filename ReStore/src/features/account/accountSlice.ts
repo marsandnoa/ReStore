@@ -4,6 +4,7 @@ import { FieldValues } from "react-hook-form";
 import agent from "../../app/api/agent";
 import { toast } from "react-toastify";
 import { setBasket } from "../basket/basketSlice";
+import Cookies from "js-cookie";
 
 interface AccountState{
     user: User | null;
@@ -22,7 +23,9 @@ export const signInUser= createAsyncThunk<User, FieldValues>(
             const{basket,...user}=userDto;
             localStorage.setItem('user',JSON.stringify(user));
             if(basket){ thunkAPI.dispatch(setBasket(basket))}
+            
             return user;
+
         }catch(error:any){
             return thunkAPI.rejectWithValue({error:error.message});
         }

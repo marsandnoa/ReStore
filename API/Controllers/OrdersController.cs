@@ -45,6 +45,7 @@ namespace API.Controllers
             if(basket==null) return BadRequest(new ProblemDetails{Title="Basket not found"});
             
             var items=new List<OrderItem>();
+
             foreach(var item in basket.Items){
                 var productItem=await context.Products.FindAsync(item.ProductId);
                 var itemOrdered=new ProductItemOrder
@@ -60,6 +61,7 @@ namespace API.Controllers
                     Price=productItem.Price,
                     Quantity=item.Quantity
                 };
+
                 items.Add(orderItem);
                 productItem.QuantityInStock-=item.Quantity;
             }
@@ -78,8 +80,11 @@ namespace API.Controllers
             context.Baskets.Remove(basket);
 
             if(orderDto.SaveAddress){
-                var user=context.Users.FirstOrDefault(x=>x.UserName==User.Identity.Name);
-                user.Address=new UserAddress{
+                var user=context.Users
+                .Include(a=>a.Address)
+                .FirstOrDefault(x=>x.UserName==User.Identity.Name);
+
+                var address=new UserAddress{
                     FullName=orderDto.ShippingAddress.FullName,
                     Address1=orderDto.ShippingAddress.Address1,
                     Address2=orderDto.ShippingAddress.Address2,
@@ -88,6 +93,9 @@ namespace API.Controllers
                     ZipCode=orderDto.ShippingAddress.ZipCode,
                     Country=orderDto.ShippingAddress.Country
                 };
+
+                user.Address=address;
+
                 context.Update(user);
             }
 

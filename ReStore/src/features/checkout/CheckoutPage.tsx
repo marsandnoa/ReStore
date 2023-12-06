@@ -1,5 +1,5 @@
 import { Box, Button, Paper, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddressForm from "./AddressForm";
 import PaymentForm from "./PaymentForm";
 import Review from "./Review";
@@ -10,7 +10,7 @@ import { clearBasket } from "../basket/basketSlice";
 import agent from "../../app/api/agent";
 import { LoadingButton } from "@mui/lab";
 import { useAppDispatch } from "../../app/store/configureStore";
-
+import Cookies from "js-cookie";
 const steps = ['Shipping address', 'Review your order', 'Payment details'];
 
 function getStepContent(step: number) {
@@ -39,6 +39,15 @@ export default function CheckoutPage() {
         resolver: yupResolver(currentValidationSchema),
     });
 
+    useEffect(() => {
+        agent.Account.fetchAddress()
+        .then(response=>{
+            if(response){
+                method.reset({...method.getValues(),...response, saveAddress: false});
+            }
+        })
+    },[method]);
+
     const handleNext = async (data:FieldValues) => {
         const{nameOnCard,saveAddress,...shippingAddress}=data;
         if(activeStep===steps.length-1){
@@ -46,8 +55,8 @@ export default function CheckoutPage() {
             try{
                 const orderNumber=await agent.Orders.create({saveAddress,shippingAddress});
                 setOrderNumber(orderNumber);
-                setActiveStep(activeStep + 1);
                 dispatch(clearBasket());
+                setActiveStep(activeStep + 1);
                 setLoading(false);
             }catch(error:any){
                 console.log(error);

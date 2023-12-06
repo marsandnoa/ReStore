@@ -29,14 +29,17 @@ namespace API.Controllers
         {
 
             var basket = await RetrieveBasket(GetBuyerId());
-            if (basket == null) basket=CreateBasket();
-
+            if (basket == null){
+                basket=CreateBasket();
+            }
+            
             var product = await context.Products.FindAsync(productId);
             if (product == null) return BadRequest(new ProblemDetails
             {
                 Title = "Product not found",
                 Status = 400
             });
+
             basket.AddItem(product, quantity);
 
             var result = await context.SaveChangesAsync();
@@ -102,8 +105,9 @@ namespace API.Controllers
         }
 
         private string GetBuyerId(){
-            return User.Identity.Name?? Request.Cookies["buyerId"];
+            return User.Identity?.Name?? Request.Cookies["buyerId"];
         }
+        
         private Basket CreateBasket()
         {
             var buyerId=User.Identity.Name;

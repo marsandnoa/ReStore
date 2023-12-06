@@ -42,10 +42,10 @@ namespace API.Controllers
                     this.context.Baskets.Remove(userBasket);
                     anonBasket.BuyerId=user.UserName;
                     Response.Cookies.Delete("buyerId");
+                    Response.Cookies.Append("buyerId",user.UserName);
                     await this.context.SaveChangesAsync();
                 }
             }
-
             return new UserDto{
                 Email=user.Email,
                 Token=await tokenservice.GenerateToken(user),
@@ -84,7 +84,13 @@ namespace API.Controllers
             };
         }
 
-            private async Task<Basket> RetrieveBasket(string buyId)
+        [Authorize]
+        [HttpGet("savedAddress")]
+        public async Task<ActionResult<UserAddress>> GetSavedAddress(){
+            return await this.userManager.Users.Where(x=>x.UserName==User.Identity.Name)
+            .Select(user=>user.Address).FirstOrDefaultAsync();
+        }
+        private async Task<Basket> RetrieveBasket(string buyId)
         {
             if(string.IsNullOrEmpty(buyId)){
                 Response.Cookies.Delete("buyerId");
@@ -93,7 +99,7 @@ namespace API.Controllers
             return await context.Baskets
             .Include(i => i.Items)
             .ThenInclude(p => p.Product)
-            .FirstOrDefaultAsync(x => x.BuyerId == Request.Cookies["buyerId"]);
+            .FirstOrDefaultAsync(x => x.BuyerId == buyId);
         }
     }
 }
